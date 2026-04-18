@@ -1,0 +1,196 @@
+---
+title: "lab1-Visualization_Examples"
+author: "Yunjin Wu"
+date: "2026-04-08"
+output:
+  html_document: default
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  echo = TRUE,
+  message = FALSE,
+  warning = FALSE
+)
+
+library(ggplot2)
+data(mpg)
+```
+
+## Supplementary Examples for Data Visualization
+
+In this document, we use the mpg dataset from ggplot2 to illustrate several common plot types.
+We will look at how to describe categorical variables, quantitative variables, and relationships between variables using different graphics in R.
+
+## Dataset Overview
+
+Below is a table summarizing the key information about the dataset.
+This dataset contains fuel economy data for 234 cars, along with several vehicle characteristics.
+
+| Variable | Type | Description |
+|:--|:--|:--|
+| `manufacturer` | Categorical | Car manufacturer |
+| `model` | Categorical | Car model |
+| `displ` | Quantitative | Engine displacement (in liters) |
+| `year` | Categorical / Numeric | Year of manufacture |
+| `cyl` | Quantitative | Number of cylinders |
+| `trans` | Categorical | Type of transmission |
+| `drv` | Categorical | Drive type (`f`, `r`, `4`) |
+| `cty` | Quantitative | City mileage |
+| `hwy` | Quantitative | Highway mileage |
+| `fl` | Categorical | Fuel type |
+| `class` | Categorical | Type of car |
+
+### 1. A categorical variable: bar plot
+
+A bar plot is commonly used to summarize a categorical variable by showing the count in each category.
+
+```{r}
+ggplot(mpg, aes(x = class)) +
+  geom_bar() +
+  labs(
+    title = "Bar Plot of Vehicle Class",
+    x = "Vehicle Class",
+    y = "Count"
+  )
+```
+
+#### Conclusion:
+
+This bar plot shows the distribution of vehicle classes in the dataset. Some classes, such as SUVs and compact cars, appear more frequently than others, while classes such as 2-seaters and minivans appear less frequently. A bar plot is useful because it makes category counts easy to compare.
+
+
+### 2. A quantitative variable: histogram
+
+A histogram is useful for describing the distribution of a quantitative variable.
+
+```{r}
+ggplot(mpg, aes(x = hwy)) +
+  geom_histogram(binwidth = 2) +
+  labs(
+    title = "Histogram of Highway Mileage",
+    x = "Highway Mileage",
+    y = "Frequency"
+  )
+```
+
+#### Conclusion:
+
+This histogram shows the distribution of highway mileage. Most cars in the dataset have highway mileage in the middle range, while very low and very high values are less common. A histogram helps us see the shape, center, and spread of a quantitative variable.
+
+
+### 3. A quantitative variable: box plot
+
+A box plot gives a compact summary of a quantitative variable.
+
+```{r}
+ggplot(mpg, aes(y = hwy)) +
+  geom_boxplot() +
+  labs(
+    title = "Box Plot of Highway Mileage",
+    y = "Highway Mileage"
+  )
+```
+
+#### Conclusion:
+
+This box plot summarizes the center and variability of highway mileage. It highlights the median, the interquartile range, and possible outliers. Compared with the histogram, the box plot gives a more compact summary but less detail about the exact distribution shape.
+
+
+### 4. A categorical variable and a quantitative variable: box plot
+
+A box plot is also useful for comparing a quantitative variable across categories.
+
+```{r}
+ggplot(mpg, aes(x = class, y = hwy)) +
+  geom_boxplot() +
+  labs(
+    title = "Box Plot of Highway Mileage by Vehicle Class",
+    x = "Vehicle Class",
+    y = "Highway Mileage"
+  )
+```
+
+#### Conclusion:
+
+This plot compares highway mileage across vehicle classes. We can see that the distribution of highway mileage differs by class, and some classes tend to have higher mileage than others. Box plots are especially helpful for comparing medians, spreads, and possible outliers across groups.
+
+
+### 5. A categorical variable and a quantitative variable: violin plot
+
+A violin plot shows the distribution of a quantitative variable within each category, with more detail about shape.
+
+```{r}
+ggplot(mpg, aes(x = class, y = hwy)) +
+  geom_violin() +
+  labs(
+    title = "Violin Plot of Highway Mileage by Vehicle Class",
+    x = "Vehicle Class",
+    y = "Highway Mileage"
+  )
+```
+
+#### Conclusion:
+
+This violin plot also compares highway mileage across vehicle classes, but it provides more information about the shape of the distribution in each group. Compared with the box plot, it helps us see where the data are more concentrated within each category.
+
+
+### 6. Two quantitative variables: scatterplot
+
+A scatterplot is the standard way to examine the relationship between two quantitative variables.
+
+```{r}
+ggplot(mpg, aes(x = displ, y = hwy)) +
+  geom_point() +
+  labs(
+    title = "Scatterplot of Highway Mileage vs Engine Displacement",
+    x = "Engine Displacement",
+    y = "Highway Mileage"
+  )
+```
+
+#### Conclusion:
+
+This scatterplot suggests a negative relationship between engine displacement and highway mileage. In general, cars with larger engines tend to have lower highway mileage. Scatterplots are useful because they show direction, form, and strength of association between two quantitative variables.
+
+
+### 7. Two categorical variables in a model
+
+In R, categorical variables can be included directly in a model formula.
+Here we fit a linear model using class and drv as predictors for hwy.
+
+```{r}
+fit <- lm(hwy ~ class + drv, data = mpg)
+summary(fit)
+```
+
+#### Conclusion:
+
+This model includes two categorical predictors: class and drv. R automatically converts these categorical variables into indicator variables when fitting the model. This example shows that categorical predictors can be incorporated directly into regression models using the formula interface.
+
+### 8. Optional: interaction between two categorical variables
+
+If we want to allow the effect of one categorical variable to depend on another, we can include an interaction term.
+
+```{r}
+fit_int <- lm(hwy ~ class * drv, data = mpg)
+summary(fit_int)
+```
+
+#### Conclusion:
+
+This interaction model allows the relationship associated with drive type to vary across vehicle classes. In other words, it is more flexible than the additive model. This is useful when we suspect that the effect of one categorical variable may differ by group.
+
+
+## Final summary
+
+In this example:
+
+- a bar plot was used to describe a categorical variable;
+- a histogram and a box plot were used to describe a quantitative variable;
+- a box plot and a violin plot were used to examine the relationship between a categorical variable and a quantitative variable;
+- a scatterplot was used to examine the relationship between two quantitative variables;
+and a linear model was used to include two categorical variables in R.
+
+These examples show how different plot types and models are matched to different types of variables and research questions.

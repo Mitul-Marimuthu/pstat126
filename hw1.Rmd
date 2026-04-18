@@ -1,0 +1,46 @@
+---
+title: "hw1"
+author: "Mitul Marimuthu"
+date: "2026-04-18"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r loadset}
+data <- read.csv("./datasets/Dataset.csv")
+```
+
+```{r eval = FALSE}
+class(data['Energy_Consumption_kWh'])
+head(data['Energy_Consumption_kWh'])
+```
+
+
+```{r nullmodel}
+null_model <- lm(Energy_Consumption_kWh ~ 1, data = data)
+```
+
+```{r nullmodelsummary}
+null_model$coefficients
+mean(data$Energy_Consumption_kWh)
+summary(null_model)
+```
+
+```{r slrscatt}
+plot(data$Temperature_C, data$Energy_Consumption_kWh, xlab = "Temperature (C)",
+     ylab = "Energy Consumption (kWh)", main = "Temperature vs Energy Consumption")
+```
+
+
+```{r simplelinreg}
+sim_lin_reg = lm(data$Energy_Consumption_kWh ~ data$Temperature_C, data = data)
+```
+
+```{r slrsummary}
+summary(sim_lin_reg)
+```
+
+
