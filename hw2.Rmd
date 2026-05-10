@@ -1,0 +1,140 @@
+---
+title: "hw2"
+author: "Mitul Marimuthu"
+date: "2026-05-10"
+output:
+  # pdf_document: default
+  html_document: 
+    mathjax: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r loadset}
+data <- read.csv("./datasets/Dataset.csv")
+```
+
+```{r eval = FALSE}
+class(data['Energy_Consumption_kWh'])
+head(data['Energy_Consumption_kWh'])
+```
+
+
+```{r nullmodel}
+null_model <- lm(Energy_Consumption_kWh ~ 1, data = data)
+```
+
+```{r nullmodelsummary}
+null_model$coefficients
+mean(data$Energy_Consumption_kWh)
+sse_null <- sum(resid(null_model)^2)
+sse_null
+summary(null_model)
+```
+
+
+```{r simplelinreg}
+sim_lin_reg = lm(data$Energy_Consumption_kWh ~ data$Temperature_C, data = data)
+```
+
+```{r slrsummary}
+summary(sim_lin_reg)
+sse_lin <- sum(resid(sim_lin_reg)^2)
+```
+```{r comparison}
+sse_null
+sse_lin
+```
+
+The simple linear regression model has a smaller SSE, therefore it is a better model. 
+
+```{r slrscatt}
+plot(data$Temperature_C, data$Energy_Consumption_kWh, xlab = "Temperature (C)",
+     ylab = "Energy Consumption (kWh)", main = "Temperature vs Energy Consumption")
+abline(null_model, col = "red")
+abline(sim_lin_reg, col = "blue")
+```
+
+```{r summarynull}
+summary(null_model)
+```
+## 1a. Null Model summary description
+
+The residuals section shows the distribution of the residuals with min at -28.178 and max at 39.273.
+
+Coefficents section:
+
+  - The value for \( \hat{\beta}_0 \) is 102.86, which is the mean of the data in the null model
+  - The standard error is 2.59, indicating that estimates for \(\hat{\beta}_0\) deviate from the population parameter by 2.59 on average. 
+  - The t-value is 39.71 meaning the value for \( \hat{\beta}_0 \) is 39.71 standard errors away from 0, and it's corresponding p-value (with a null hypothesis of \(\beta_0 = 0\)) is very small. This indicates that there is statistically significant evidence that \(\beta_0 \neq 0\).
+  
+- A residual standard error of 18.31 indicates that the actual values deviate from their predicted values by 18.31 on average.
+  
+```{r summaryslr}
+summary(sim_lin_reg)
+```
+  
+## 1b. Simple Linear Regression Model summary description
+
+The residuals section shows the distribution of the residuals, with a min of -12.5034 and a max od 8.3998
+
+Coefficients section:
+
+- Intercept: \( \hat{\beta}_0 \) = 50.93031. It's standard error is 2.04439 meaning estimates for the intercept deviate from the true population parameter by 2.04439. It's t-value ie 24.91 meaning \( \hat{\beta}_0 \) is 24.91 stanard errors away from 0 which produces a p-value that is very small, indicating that there is strong statistical evidence that \( \hat{\beta}_0 \neq 0\).
+- `data$Temperature_C`: \( \hat{\beta}_1 \) = 2.45531. It's standard error is 0.09158 meaning estimates for the slope deviate from the true population parameter by 0.09158 on average. It's t-value is 26.81 meaning \( \hat{\beta}_1 \) is 26.81 standard errors away from 0 which produces a p-value that is very small, indicating that there is strong statistical evidence that \( \hat{\beta}_1 \neq 0\).
+- The residual standard error is 4.63, indicating the average deviation of 4.63 of actual values from their predicted values
+- \( R^2 \) = 0.9374 indicating that around 93.74% of the variance in energy consumption is explained by temperature
+- A large F-statistic and low p-value indicate that this model is better than just using the mean. 
+
+
+## 2. 95% confidence intervals and prediction intervals.
+
+### Null-model confidence interval for all estimates
+```{r nullci}
+ci = predict(null_model, interval="confidence", level = 0.95)
+ci
+```
+
+### Null-model prediction interval
+```{r nullpred}
+pi = predict(null_model, interval="prediction", level = 0.95)
+pi
+```
+
+### Simple linear regression model confidence interval
+```{r simcon}
+ci_slr = predict(sim_lin_reg, interval="confidence", level=0.95)
+ci_slr
+```
+
+### Simple linear regression model prediction interval
+```{r simpred}
+pi_slr = predict(sim_lin_reg, interval="prediction", level=0.95)
+pi_slr
+```
+# 3. Which model
+
+The simple linear regression model has a smaller RSE, higher \( R^2 \) value and higher F-value so therefore I would rather have the simple linear regression model over the null model. 
+
+# 4. Interpretations
+
+## 4a. Null Model
+
+- The intercept is 102.86, meaning that the energy consumed is 102.86 kWh on average.
+- The standard error is 2.59, indicating that estimates for the intercept deviate from the population parameter by 2.59 on average. 
+- The t-value is 39.71 meaning the value for \( \hat{\beta}_0 \) is 39.71 standard errors away from 0, and it's corresponding p-value (with a null hypothesis of \(\beta_0 = 0\)) is very small. This indicates that there is statistically significant evidence that \(\beta_0 \neq 0\).
+
+## 4b. Simple Linear Regression Model
+
+- Intercept: \( \hat{\beta}_0 \) = 50.93031. This means that when the temperature is 0 degrees Celsius, the energy consumed in 50.93031 kWh. It's standard error is 2.04439 meaning estimates for the intercept deviate from the true population parameter by 2.04439. It's t-value ie 24.91 meaning \( \hat{\beta}_0 \) is 24.91 stanard errors away from 0 which produces a p-value that is very small, indicating that there is strong statistical evidence that \( \hat{\beta}_0 \neq 0\).
+- `data$Temperature_C`: \( \hat{\beta}_1 \) = 2.45531. This means that for each 1 degree Celsius increase in temperature, the energy consumed increases by 2.45531 kWh. It's standard error is 0.09158 meaning estimates for the slope deviate from the true population parameter by 0.09158 on average. It's t-value is 26.81 meaning \( \hat{\beta}_1 \) is 26.81 standard errors away from 0 which produces a p-value that is very small, indicating that there is strong statistical evidence that \( \hat{\beta}_1 \neq 0\).
+- The residual standard error is 4.63, indicating the average deviation of 4.63 of actual values from their predicted values
+- \( R^2 \) = 0.9374 indicating that around 93.74% of the variance in energy consumption is explained by temperature
+- A large F-statistic and low p-value indicate that this model is better than just using the mean. 
+
+
+
+
+
